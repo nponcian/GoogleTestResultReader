@@ -1,5 +1,30 @@
 #!/bin/bash
 
+func_displayhelp()
+{
+    echo "This will display the googletest result of execution from a compiled executable."
+    echo
+    echo "USAGE:"
+    echo
+    echo "1. ./readgtest --help"
+    echo "        At your service when you need help!"
+    echo
+    echo "2. ./readgtest /Absolute/Path/To/Compiled/Executable/Running/Tests"
+    echo "   ./readgtest ../Relative/Path/To/Compiled/Executable/Running/Tests"
+    echo "   ./readgtest CompiledExecutableRunningTests"
+    echo "   ./readgtest ./CompiledExecutableRunningTests"
+    echo "        Display the result of the whole run of all testcases."
+    echo
+    echo "3. Append commands in #2 above but with additional flag <--all>"
+    echo "   example: ./readgtest CompiledExecutableRunningTests --all"
+    echo "        Same output as #2"
+    echo
+    echo "4. Append commands in #2 above but with additional flag and argument <--test TestCaseName>"
+    echo "   example: ./readgtest CompiledExecutableRunningTests --test FactorialTest"
+    echo "        Display the result of the run of the target testcase."
+    echo
+}
+
 func_displaygoogletestline()
 {
     local line="${1}"
@@ -27,7 +52,10 @@ readgtest()
         return
     fi
 
-    if [ "$#" == "1" ]; then
+    if [ "${1}" == "--help" ]; then
+        func_displayhelp
+
+    elif [ "$#" == "1" ]; then
         (./"${1}")
 
     elif [ "${2}" == "--all" ]; then
