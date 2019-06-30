@@ -14,8 +14,18 @@ readgtest()
         (./"${1}")
 
     elif [ "${2}" == "--test" ]; then
+        local testName="${3}"
+
+        (./"${1}") > readgtest_all.tmp
+
+        while read line; do
+            if [[ ${line} =~ ${testName} ]]; then
+                echo "${line}"
+            fi
+        done < readgtest_all.tmp
 
     fi
 }
 
 readgtest ${@}
+rm -rf *.tmp
