@@ -1,0 +1,21 @@
+#!/bin/bash
+
+readgtest()
+{
+    if [ $# -eq 0 ]; then
+        echo "No arguments supplied"
+        return
+    fi
+
+    if [ "$#" == "1" ]; then
+        (./"${1}")
+
+    elif [ "${2}" == "--all" ]; then
+        (./"${1}")
+
+    elif [ "${2}" == "--test" ]; then
+
+    fi
+}
+
+readgtest ${@}
