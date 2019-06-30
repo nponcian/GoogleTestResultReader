@@ -18,11 +18,13 @@ readgtest()
         local RED='\033[0;31m'
         local GREEN='\033[0;32m'
         local WHITE='\033[0;37m'
+        local waitingForResult=false
 
         (./"${1}") > readgtest_all.tmp
 
         while read line; do
             if [[ ${line} =~ ${testName} ]]; then
+
                 if [[ ${line} =~ "[  FAILED  ]" ]]; then
                     echo -e "${RED}${line}"
                 elif [[ ${line} =~ "[==========]" ||
@@ -33,6 +35,27 @@ readgtest()
                 else
                     echo -e "${WHITE}${line}"
                 fi
+
+                if [[ ${line} =~ "[ RUN      ]" ]]; then
+                    waitingForResult=true
+                elif [[ ${line} =~ "[       OK ]" ||
+                        ${line} =~ "[  FAILED  ]" ]]; then
+                    waitingForResult=false
+                fi
+
+            elif ${waitingForResult} ; then
+
+                if [[ ${line} =~ "[  FAILED  ]" ]]; then
+                    echo -e "${RED}${line}"
+                elif [[ ${line} =~ "[==========]" ||
+                        ${line} =~ "[----------]" ||
+                        ${line} =~ "[ RUN      ]" ||
+                        ${line} =~ "[       OK ]" ]]; then
+                    echo -e "${GREEN}${line}"
+                else
+                    echo -e "${WHITE}${line}"
+                fi
+
             fi
         done < readgtest_all.tmp
 
