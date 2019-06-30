@@ -1,5 +1,25 @@
 #!/bin/bash
 
+func_displaygoogletestline()
+{
+    local line="${1}"
+
+    local RED='\033[0;31m'
+    local GREEN='\033[0;32m'
+    local WHITE='\033[0;37m'
+
+    if [[ ${line} =~ "[  FAILED  ]" ]]; then
+        echo -e "${RED}${line}"
+    elif [[ ${line} =~ "[==========]" ||
+            ${line} =~ "[----------]" ||
+            ${line} =~ "[ RUN      ]" ||
+            ${line} =~ "[       OK ]" ]]; then
+        echo -e "${GREEN}${line}"
+    else
+        echo -e "${WHITE}${line}"
+    fi
+}
+
 readgtest()
 {
     if [ $# -eq 0 ]; then
@@ -15,26 +35,13 @@ readgtest()
 
     elif [ "${2}" == "--test" ]; then
         local testName="${3}"
-        local RED='\033[0;31m'
-        local GREEN='\033[0;32m'
-        local WHITE='\033[0;37m'
         local waitingForResult=false
 
         (./"${1}") > readgtest_all.tmp
 
         while read line; do
             if [[ ${line} =~ ${testName} ]]; then
-
-                if [[ ${line} =~ "[  FAILED  ]" ]]; then
-                    echo -e "${RED}${line}"
-                elif [[ ${line} =~ "[==========]" ||
-                        ${line} =~ "[----------]" ||
-                        ${line} =~ "[ RUN      ]" ||
-                        ${line} =~ "[       OK ]" ]]; then
-                    echo -e "${GREEN}${line}"
-                else
-                    echo -e "${WHITE}${line}"
-                fi
+                func_displaygoogletestline "${line}"
 
                 if [[ ${line} =~ "[ RUN      ]" ]]; then
                     waitingForResult=true
@@ -44,18 +51,7 @@ readgtest()
                 fi
 
             elif ${waitingForResult} ; then
-
-                if [[ ${line} =~ "[  FAILED  ]" ]]; then
-                    echo -e "${RED}${line}"
-                elif [[ ${line} =~ "[==========]" ||
-                        ${line} =~ "[----------]" ||
-                        ${line} =~ "[ RUN      ]" ||
-                        ${line} =~ "[       OK ]" ]]; then
-                    echo -e "${GREEN}${line}"
-                else
-                    echo -e "${WHITE}${line}"
-                fi
-
+                func_displaygoogletestline "${line}"
             fi
         done < readgtest_all.tmp
 
