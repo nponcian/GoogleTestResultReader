@@ -3,7 +3,7 @@
 readgtest()
 {
     if [ $# -eq 0 ]; then
-        echo "No arguments supplied"
+        echo "No arguments supplied. Input --help for more information."
         return
     fi
 
@@ -15,12 +15,24 @@ readgtest()
 
     elif [ "${2}" == "--test" ]; then
         local testName="${3}"
+        local RED='\033[0;31m'
+        local GREEN='\033[0;32m'
+        local WHITE='\033[0;37m'
 
         (./"${1}") > readgtest_all.tmp
 
         while read line; do
             if [[ ${line} =~ ${testName} ]]; then
-                echo "${line}"
+                if [[ ${line} =~ "[  FAILED  ]" ]]; then
+                    echo -e "${RED}${line}"
+                elif [[ ${line} =~ "[==========]" ||
+                        ${line} =~ "[----------]" ||
+                        ${line} =~ "[ RUN      ]" ||
+                        ${line} =~ "[       OK ]" ]]; then
+                    echo -e "${GREEN}${line}"
+                else
+                    echo -e "${WHITE}${line}"
+                fi
             fi
         done < readgtest_all.tmp
 
