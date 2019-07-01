@@ -65,7 +65,7 @@ readgtest()
         local testName="${3}"
         local waitingForResult=false
 
-        (./"${1}") > readgtest_all.tmp
+        (./"${1}") > "$(dirname ${0})/readgtest_all.tmp"
 
         while read line; do
             if [[ ${line} =~ ${testName} ]]; then
@@ -81,10 +81,11 @@ readgtest()
             elif ${waitingForResult} ; then
                 func_displaygoogletestline "${line}"
             fi
-        done < readgtest_all.tmp
+        done < "$(dirname ${0})/readgtest_all.tmp"
 
     fi
 }
 
 readgtest ${@}
-rm -rf *.tmp
+echo -e '\033[0;37m' # to bring back the color of display to white upon return of script
+rm -rf $(dirname ${0})/*.tmp
